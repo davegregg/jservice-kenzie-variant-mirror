@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import parser from 'koa-bodyparser';
+import cors from '@koa/cors';
 import route from 'koa-route';
 import pg from 'pg';
 
@@ -8,6 +9,7 @@ const pool = new pg.Pool({
   connectionString: 'postgresql://jservice:jservice@localhost:5432/jservice',
 });
 
+app.use(cors());
 app.use(parser());
 
 app.use(route.get('/', async ctx => {
