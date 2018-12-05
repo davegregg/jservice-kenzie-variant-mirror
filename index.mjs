@@ -130,6 +130,31 @@ app.use(route.get('/', async ctx => {
   "invalid_count"?: number
 }
           </pre>
+          <h2>PUT /api/clues/:id</h2>
+          <p>Updates the specified clue.</p>
+          <p>Send an answer, question, and value.</p>
+          <pre>
+{
+  "answer": string,
+  "question": string,
+  "value": number
+}
+          </pre>
+          <p>Returns the updated clue if it succeeds.</p>
+          <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "category_id": number,
+  "category": {
+    "id": number,
+    "title": string
+  },
+  "invalid_count"?: number
+}
+          </pre>
           <h2>DELETE /api/clues/:id</h2>
           <p>Increments the invalid_count value by 1, if the clue exists.</p>
           <p>Returns the clue.</p>
@@ -259,6 +284,48 @@ app.use(route.get('/api/clues/:id', async (ctx, id) => {
         title: row.title
       }
     };
+  } else {
+    ctx.status = 404;
+    ctx.body = { message: 'That clue does not exist.' };
+  }
+}));
+
+app.use(route.put('/api/clues/:id', async (ctx, id) => {
+  const { answer, question, value } = ctx.request.body;
+  let result = await pool.query(`
+    UPDATE clues
+       SET answer = $1
+         , question = $2
+         , value = $3
+     WHERE id = $4
+     RETURNING *
+  `, [answer, question, value, id]);
+  if (result.rows.length) {
+    const result = await pool.query(`
+      SELECT clues.id, clues.answer, clues.question, clues.value, clues.category_id, clues.invalid_count
+        , categories.title
+      FROM clues
+      JOIN categories ON(clues.category_id = categories.id)
+      WHERE clues.id = $1
+    `, [id]);
+    if (result.rows.length) {
+      const row = result.rows[0];
+      ctx.body = {
+        id: row.id,
+        answer: row.answer,
+        question: row.question,
+        value: row.value,
+        category_id: row.category_id,
+        invalid_count: row.invalid_count,
+        category: {
+          id: row.category_id,
+          title: row.title
+        }
+      };
+    } else {
+      ctx.status = 404;
+      ctx.body = { message: 'That clue does not exist.' };
+    }
   } else {
     ctx.status = 404;
     ctx.body = { message: 'That clue does not exist.' };
