@@ -10,6 +10,150 @@ const pool = new pg.Pool({
 
 app.use(parser());
 
+app.use(route.get('/', async ctx => {
+  ctx.type = 'html';
+  ctx.body = `
+    <html>
+      <head>
+        <title>jService.xyz - An https alternative</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <style>
+          main { width: 800px; margin: auto; }
+          h2 { font-family: monospace; border-top: 1px solid #999; padding-top: .5em; }
+          footer { width: 800px; margin: auto; font-size: .75em; }
+        </style>
+      </head>
+      <body>
+        <main>
+          <h1>API</h1>
+          <h2>GET /api/categories</h2>
+          <p>Returns a list of categories.</>
+          <pre>
+[
+  {
+    "id": number,
+    "title": string
+  }
+]
+          </pre>
+          <h2>GET /api/categories/:id</h2>
+          <p>Returns a category with the specified id.</p>
+          <pre>
+[
+  {
+    "id": number,
+    "title": string
+  }
+]
+          </pre>
+          <h2>POST /api/categories</h2>
+          <p>Creates a new category.</>
+          <p>Send a title</p>
+          <pre>
+{ "title": string }
+          </pre>
+          <p>Returns a category object with an id if it succeeds.</p>
+          <pre>
+{
+  "id": number,
+  "title": string
+}
+          </pre>
+          <h2>GET /api/clues</h2>
+          <p>Gets a list of clues.</>
+          <pre>
+[
+  {
+    "id": number,
+    "answer": string,
+    "question": string,
+    "value": number,
+    "category_id": number,
+    "category": {
+      "id": number,
+      "title": string
+    },
+    "invalid_count"?: number
+  }
+]
+          </pre>
+          <h2>GET /api/clues/:id</h2>
+          <p>Gets the clue specified by id.</p>
+          <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "category_id": number,
+  "category": {
+    "id": number,
+    "title": string
+  },
+  "invalid_count"?: number
+}
+          </pre>
+          <h2>POST /api/clues</h2>
+          <p>Creates a new clue.</>
+          <p>Send an answer, question, value, and category id.</p>
+          <pre>
+{
+  "answer": string,
+  "question": string,
+  "value": number,
+  "category_id": number
+}
+          </pre>
+          <p>Returns a clue with an id and category object if it succeeds.</p>
+          <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "category_id": number,
+  "category": {
+    "id": number,
+    "title": string
+  },
+  "invalid_count"?: number
+}
+          </pre>
+          <h2>DELETE /api/clues/:id</h2>
+          <p>Increments the invalid_count value by 1, if the clue exists.</p>
+          <p>Returns the clue.</p>
+          <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "category_id": number,
+  "category": {
+    "id": number,
+    "title": string
+  },
+  "invalid_count"?: number
+}
+          </pre>
+        </main>
+        <footer>
+          <p>
+            Copyright 2018 Curtis Schlak. All rights reserved.
+          </p>
+          <p>
+            There are no guarantees that this service will contain data or be accessible.
+          </p>
+          <p>
+            Thank you for your support.
+          </p>
+        </footer>
+      </body>
+    </html>
+  `;
+}));
+
 app.use(route.get('/api/categories', async ctx => {
   const result = await pool.query('SELECT * FROM categories');
   ctx.body = result.rows;
@@ -17,7 +161,12 @@ app.use(route.get('/api/categories', async ctx => {
 
 app.use(route.get('/api/categories/:id', async (ctx, id) => {
   const result = await pool.query('SELECT * FROM categories WHERE id = $1', [id]);
-  ctx.body = result.rows;
+  if (result.rows.length) {
+    ctx.body = result.rows[0];
+  } else {
+    ctx.status = 404;
+    ctx.body = { message: 'That category does not exist.' };
+  }
 }));
 
 app.use(route.post('/api/categories', async (ctx) => {
@@ -86,22 +235,27 @@ app.use(route.get('/api/clues/:id', async (ctx, id) => {
     JOIN categories ON(clues.category_id = categories.id)
     WHERE clues.id = $1
   `, [id]);
-  const row = result.rows[0];
-  ctx.body = {
-    id: row.id,
-    answer: row.answer,
-    question: row.question,
-    value: row.value,
-    category_id: row.category_id,
-    invalid_count: row.invalid_count,
-    category: {
-      id: row.category_id,
-      title: row.title
-    }
-  };
+  if (result.rows.length) {
+    const row = result.rows[0];
+    ctx.body = {
+      id: row.id,
+      answer: row.answer,
+      question: row.question,
+      value: row.value,
+      category_id: row.category_id,
+      invalid_count: row.invalid_count,
+      category: {
+        id: row.category_id,
+        title: row.title
+      }
+    };
+  } else {
+    ctx.status = 404;
+    ctx.body = { message: 'That clue does not exist.' };
+  }
 }));
 
-app.use(route.post('/api/clues', async (ctx, id) => {
+app.use(route.post('/api/clues', async ctx => {
   const { answer, question, value, category_id } = ctx.request.body;
   if (answer && question && value && category_id) {
     try {
@@ -134,6 +288,34 @@ app.use(route.post('/api/clues', async (ctx, id) => {
       message: 'You must supply an answer, question, value, and category_id'
     };
   }
+}));
+
+app.use(route.delete('/api/clues/:id', async (ctx, id) => {
+  const deleteResult = await pool.query(`
+    UPDATE clues
+    SET invalid_count = COALESCE(invalid_count, 0) + 1
+    WHERE id = $1
+  `, [id]);
+  const result = await pool.query(`
+    SELECT clues.id, clues.answer, clues.question, clues.value, clues.category_id, clues.invalid_count
+      , categories.title
+    FROM clues
+    JOIN categories ON(clues.category_id = categories.id)
+    WHERE clues.id = $1
+  `, [id]);
+  const row = result.rows[0];
+  ctx.body = {
+    id: row.id,
+    answer: row.answer,
+    question: row.question,
+    value: row.value,
+    category_id: row.category_id,
+    invalid_count: row.invalid_count,
+    category: {
+      id: row.category_id,
+      title: row.title
+    }
+  };
 }));
 
 app.listen(8182);
