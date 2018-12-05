@@ -28,7 +28,7 @@ app.use(route.get('/', async ctx => {
         <main>
           <h1>API</h1>
           <h2>GET /api/categories</h2>
-          <p>Returns a list of categories.</>
+          <p>Returns a list of categories.</p>
           <pre>
 [
   {
@@ -48,7 +48,7 @@ app.use(route.get('/', async ctx => {
 ]
           </pre>
           <h2>POST /api/categories</h2>
-          <p>Creates a new category.</>
+          <p>Creates a new category.</p>
           <p>Send a title</p>
           <pre>
 { "title": string }
@@ -61,7 +61,15 @@ app.use(route.get('/', async ctx => {
 }
           </pre>
           <h2>GET /api/clues</h2>
-          <p>Gets a list of clues.</>
+          <p>Gets a list of 100 clues.</p>
+          <p>
+            You can filter by query parameters.
+            <ul>
+              <li><b>value</b>: The value of the clue.</li>
+              <li><b>category</b>: The id of the clue's category.</li>
+              <li><b>offset</b>: The offset of the clue, useful for pagination.</li>
+            </ul>
+          </p>
           <pre>
 [
   {
@@ -95,7 +103,7 @@ app.use(route.get('/', async ctx => {
 }
           </pre>
           <h2>POST /api/clues</h2>
-          <p>Creates a new clue.</>
+          <p>Creates a new clue.</p>
           <p>Send an answer, question, value, and category id.</p>
           <pre>
 {
