@@ -1,0 +1,32 @@
+{
+  "name": "editable-jservice",
+  "version": "0.1.0",
+  "description": "A jservice.io-like API that allows submission.",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --experimental-modules index.mjs",
+    "seed": "node --experimental-modules seed-data-from-jservice.io.mjs",
+    "dev": "nodemon -x \"node --experimental-modules index.mjs\" --watch *.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/realistschuckle/jservice.xyz.git"
+  },
+  "author": "Curtis Schlak <realistschuckle@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/realistschuckle/jservice.xyz/issues"
+  },
+  "homepage": "https://gitlab.com/realistschuckle/jservice.xyz#readme",
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-route": "^3.2.0",
+    "node-fetch": "^2.3.0",
+    "pg": "^7.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.7"
+  }
+}
