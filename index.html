@@ -1,0 +1,250 @@
+<html>
+
+<head>
+  <title>jService.xyz - An https alternative</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
+    crossorigin="anonymous">
+  <style>
+    main, header {
+      width: 800px;
+      margin: auto;
+    }
+
+    header ul {
+      background-color: black;
+      color: white;
+      display: flex;
+      font-size: 1.5em;
+      justify-content: space-between;
+      list-style: none;
+      margin: 0;
+      padding: 1em;
+      text-transform: uppercase;
+    }
+
+    header li {
+      display: block;
+    }
+
+    h3 {
+      font-family: monospace;
+      border-top: 1px solid #999;
+      padding-top: .5em;
+      font-size: 1.25em;
+    }
+
+    footer {
+      width: 800px;
+      margin: auto;
+      font-size: .75em;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <ul>
+      <li>6165 games</li>
+      <li>40950 categories</li>
+      <li>355237 clues</li>
+    </ul>
+  </header>
+  <main>
+    <h1>API</h1>
+    <h2>Games</h2>
+    <h3>GET /api/games</h3>
+    <p>Returns a list of games.</p>
+    <pre>
+[
+  {
+    "id": number,
+    "episodeId": number,
+    "aired": string,
+    "canon": <b>true</b>
+  }
+]
+    </pre>
+    <h2>Categories</h2>
+    <h3>GET /api/categories</h3>
+    <p>Returns a list of categories.</p>
+    <pre>
+[
+  {
+    "id": number,
+    "title": string,
+    "canon": boolean
+  }
+]
+    </pre>
+    <h3>GET /api/categories/:id</h3>
+    <p>Returns a category with the specified id.</p>
+    <pre>
+[
+  {
+    "id": number,
+    "title": string,
+    "canon": boolean
+  }
+]
+    </pre>
+    <h3>POST /api/categories</h3>
+    <p>Creates a new category.</p>
+    <p>Send a title</p>
+    <pre>
+{ "title": string }
+    </pre>
+    <p>Returns a category object with an id if it succeeds.</p>
+    <pre>
+{
+  "id": number,
+  "title": string,
+  "canon": <b>false</b>
+}
+    </pre>
+    <h2>Clues</h2>
+    <h3>GET /api/clues</h3>
+    <p>Gets a list of 100 clues.</p>
+    <p>
+      You can filter by query parameters.
+      <ul>
+        <li><b>value</b>: The value of the clue.</li>
+        <li><b>category</b>: The id of the clue's category.</li>
+        <li><b>offset</b>: The offset of the clue, useful for pagination.</li>
+      </ul>
+    </p>
+    <pre>
+[
+  {
+    "id": number,
+    "answer": string,
+    "question": string,
+    "value": number,
+    "categoryId": number,
+    "gameId?": number,
+    "invalidCount?": number,
+    "category": {
+      "id": number,
+      "title": string,
+      "canon": boolean
+    },
+    "game?": {
+      "aired": string,
+      "canon": boolean
+    },
+    "canon": boolean
+  }
+]
+    </pre>
+    <h3>GET /api/clues/:id</h3>
+    <p>Gets the clue specified by id.</p>
+    <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "categoryId": number,
+  "gameId?": number,
+  "invalidCount?": number,
+  "category": {
+    "id": number,
+    "title": string,
+    "canon": boolean
+  },
+  "game?": {
+    "aired": string,
+    "canon": boolean
+  },
+  "canon": boolean
+}
+    </pre>
+    <h3>POST /api/clues</h3>
+    <p>Creates a new clue.</p>
+    <p>Send an answer, question, value, and category id.</p>
+    <pre>
+{
+  "answer": string,
+  "question": string,
+  "value": number,
+  "categoryId": number
+}
+    </pre>
+    <p>Returns a clue with an id and category object if it succeeds.</p>
+    <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "categoryId": number,
+  "category": {
+    "id": number,
+    "title": string,
+    "canon": boolean
+  },
+  "canon": <b>false</b>
+}
+    </pre>
+    <h3>PUT /api/clues/:id</h3>
+    <p>Updates the specified clue.</p>
+    <p>Send an answer, question, and value.</p>
+    <pre>
+{
+  "answer": string,
+  "question": string,
+  "value": number
+}
+    </pre>
+    <p>
+      Returns the updated clue if it succeeds. It will only succeed
+      if the clue is not canonical.
+    </p>
+    <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "categoryId": number,
+  "invalidCount?": number,
+  "category": {
+    "id": number,
+    "title": string,
+    "canon": boolean
+  },
+  "canon": <b>false</b>
+}
+    </pre>
+    <h3>DELETE /api/clues/:id</h3>
+    <p>Increments the invalid_count value by 1, if the clue exists.</p>
+    <p>Returns the clue.</p>
+    <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "categoryId": number,
+  "category": {
+    "id": number,
+    "title": string
+  },
+  "invalid_count"?: number
+}
+    </pre>
+  </main>
+  <footer>
+    <p>
+      Copyright 2018 Curtis Schlak. All rights reserved.
+    </p>
+    <p>
+      There are no guarantees that this service will contain data or be accessible.
+    </p>
+    <p>
+      Thank you for your support.
+    </p>
+  </footer>
+</body>
+
+</html>
