@@ -25,25 +25,27 @@ export const clues = {
       ${wheres.join('\n')}
       ORDER BY clues.id LIMIT 100 OFFSET $1
     `, params);
-    ctx.body = cluesResult.rows.map(row => ({
-      id: row.id,
-      answer: row.answer,
-      question: row.question,
-      value: row.value,
-      categoryId: row.category_id,
-      gameId: row.game_id,
-      invalidCount: row.invalid_count,
-      category: {
-        id: row.category_id,
-        title: row.title,
-        canon: row.canonical_category
-      },
-      game: {
-        aired: row.aired,
-        canon: row.canonical_game
-      },
-      canon: row.canon
-    }));
+    ctx.body = {
+      clues: cluesResult.rows.map(row => ({
+        id: row.id,
+        answer: row.answer,
+        question: row.question,
+        value: row.value,
+        categoryId: row.category_id,
+        gameId: row.game_id,
+        invalidCount: row.invalid_count,
+        category: {
+          id: row.category_id,
+          title: row.title,
+          canon: row.canonical_category
+        },
+        game: {
+          aired: row.aired,
+          canon: row.canonical_game
+        },
+        canon: row.canon
+      }))
+    };
   },
   async getRandom(ctx, pool) {
     const validParam = ctx.query.valid || 'true';

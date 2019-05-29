@@ -1,7 +1,7 @@
 export const categories = {
   async get(ctx, pool) {
     const result = await pool.query('SELECT * FROM categories');
-    ctx.body = result.rows;  
+    ctx.body = { categories: result.rows };
   },
   async getOne(ctx, id, pool) {
     const result = await pool.query('SELECT * FROM categories WHERE id = $1', [id]);
@@ -15,7 +15,7 @@ export const categories = {
   async post(ctx, pool) {
     try {
       const { title } = ctx.request.body;
-  
+
       if (title) {
         const result = await pool.query('INSERT INTO categories (id, title) VALUES ((SELECT MAX(id) + 1 FROM categories), $1) RETURNING id', [title]);
         ctx.body = {
@@ -29,6 +29,6 @@ export const categories = {
     } catch (e) {
       ctx.status = 409;
       ctx.body = { message: 'That category already exists.' };
-    }  
+    }
   }
 };

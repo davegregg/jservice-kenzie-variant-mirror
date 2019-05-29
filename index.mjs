@@ -30,6 +30,8 @@ app.use(route.get('/', async ctx => {
 }));
 
 app.use(route.get('/api/games', async ctx => games.get(ctx, pool)));
+app.use(route.post('/api/random-games', async ctx => games.createRandomGame(ctx, pool)));
+app.use(route.get('/api/random-games/:id', async (ctx, id) => games.getRandomGame(ctx, id, pool)));
 
 app.use(route.get('/api/categories', async ctx => categories.get(ctx, pool)));
 app.use(route.get('/api/categories/:id', async (ctx, id) => categories.getOne(ctx, id, pool)));

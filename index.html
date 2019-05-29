@@ -53,40 +53,75 @@
   <main>
     <h1>API</h1>
     <h2>Games</h2>
+    <h3>POST /api/random-games</h3>
+    <p>Creates a "game" of 20 valid canonical clues.</p>
+    <pre>
+{
+  "id": number,
+  "clues": [
+    {
+      "id": number,
+      "episodeId": number,
+      "aired": string,
+      "canon": <b>true</b>
+    }
+  ]
+}
+    </pre>
+    <h3>GET /api/random-games/:id</h3>
+    <p>
+      Returns the "game" of 20 valid canonical clues as specified by the
+      <b>id</b> parameter.
+    </p>
+    <pre>
+{
+  "id": number,
+  "clues": [
+    {
+      "id": number,
+      "episodeId": number,
+      "aired": string,
+      "canon": <b>true</b>
+    }
+  ]
+}
+    </pre>
     <h3>GET /api/games</h3>
     <p>Returns a list of games.</p>
     <pre>
-[
-  {
-    "id": number,
-    "episodeId": number,
-    "aired": string,
-    "canon": <b>true</b>
-  }
-]
+{
+  "games": [
+    {
+      "id": number,
+      "episodeId": number,
+      "aired": string,
+      "canon": <b>true</b>
+    }
+  ]
+}
     </pre>
     <h2>Categories</h2>
     <h3>GET /api/categories</h3>
     <p>Returns a list of categories.</p>
     <pre>
-[
-  {
-    "id": number,
-    "title": string,
-    "canon": boolean
-  }
-]
+{
+  "categories": [
+    {
+      "id": number,
+      "title": string,
+      "canon": boolean
+    }
+  ]
+}
     </pre>
     <h3>GET /api/categories/:id</h3>
     <p>Returns a category with the specified id.</p>
     <pre>
-[
-  {
-    "id": number,
-    "title": string,
-    "canon": boolean
-  }
-]
+{
+  "id": number,
+  "title": string,
+  "canon": boolean
+}
     </pre>
     <h3>POST /api/categories</h3>
     <p>Creates a new category.</p>
@@ -114,27 +149,29 @@
       </ul>
     </p>
     <pre>
-[
-  {
-    "id": number,
-    "answer": string,
-    "question": string,
-    "value": number,
-    "categoryId": number,
-    "gameId?": number,
-    "invalidCount?": number,
-    "category": {
+{
+  "clues": [
+    {
       "id": number,
-      "title": string,
+      "answer": string,
+      "question": string,
+      "value": number,
+      "categoryId": number,
+      "gameId?": number,
+      "invalidCount?": number,
+      "category": {
+        "id": number,
+        "title": string,
+        "canon": boolean
+      },
+      "game?": {
+        "aired": string,
+        "canon": boolean
+      },
       "canon": boolean
-    },
-    "game?": {
-      "aired": string,
-      "canon": boolean
-    },
-    "canon": boolean
-  }
-]
+    }
+  ]
+}
     </pre>
     <h3>GET /api/clues/:id</h3>
     <p>Gets the clue specified by id.</p>

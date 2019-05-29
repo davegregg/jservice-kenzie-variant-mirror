@@ -4,6 +4,8 @@ BEGIN TRANSACTION;
 DROP TABLE IF EXISTS clues;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS game_definition_clues;
+DROP TABLE IF EXISTS game_definitions;
 
 CREATE TABLE IF NOT EXISTS categories (
   id SERIAL NOT NULL PRIMARY KEY,
@@ -30,6 +32,17 @@ CREATE TABLE IF NOT EXISTS clues (
   category_id INTEGER NOT NULL REFERENCES categories(id),
   invalid_count INTEGER DEFAULT 0,
   canon BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS game_definitions (
+  id SERIAL NOT NULL PRIMARY KEY,
+  created_on TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS game_definition_clues (
+  game_definition_id INTEGER NOT NULL,
+  clue_id INTEGER NOT NULL,
+  PRIMARY KEY(game_definition_id, clue_id)
 );
 
 COMMIT;
