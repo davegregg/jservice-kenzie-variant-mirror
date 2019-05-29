@@ -24,7 +24,7 @@ app.use(route.get('/', async ctx => {
       if (err) { return bad(err); }
       good(data);
     });
-  }); 
+  });
   ctx.type = 'html';
   ctx.body = await readFile();
 }));
@@ -40,5 +40,6 @@ app.use(route.get('/api/clues/:id', async (ctx, id) => clues.getOne(ctx, id, poo
 app.use(route.put('/api/clues/:id', async (ctx, id) => clues.put(ctx, id, pool)));
 app.use(route.post('/api/clues', async ctx => clues.post(ctx, pool)));
 app.use(route.delete('/api/clues/:id', async (ctx, id) => clues.destroy(ctx, id, pool)));
+app.use(route.get('/api/random-clue', async ctx => clues.getRandom(ctx, pool)));
 
 app.listen(8182);

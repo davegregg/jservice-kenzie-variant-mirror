@@ -45,6 +45,46 @@ export const clues = {
       canon: row.canon
     }));
   },
+  async getRandom(ctx, pool) {
+    const validParam = ctx.query.valid || 'true';
+    const validCountUpper = validParam === 'false' ? 1000000 : 0;
+    const validCountLower = validParam === 'false' ? 1 : 0;
+    console.log(validCountLower, validCountUpper)
+    const result = await pool.query(`
+      SELECT clues.id, clues.answer, clues.question, clues.value, clues.category_id, clues.invalid_count, clues.game_id, clues.canon
+        , categories.title, categories.canon AS canonical_category
+        , games.aired, games.canon AS canonical_game
+      FROM clues
+      JOIN categories ON(clues.category_id = categories.id)
+      JOIN games ON(clues.game_id = games.id)
+      JOIN (SELECT FLOOR(RANDOM() * MAX_CLUE_ID + 1)::int AS RANDOM_ID
+            FROM (SELECT MAX(id) AS MAX_CLUE_ID FROM clues WHERE clues.invalid_count BETWEEN $1 AND $2) clue_id) rando ON(clues.id >= RANDOM_ID)
+      WHERE clues.invalid_count BETWEEN $1 AND $2
+      AND clues.canon = true
+      ORDER BY clues.id
+      LIMIT 1
+    `, [validCountLower, validCountUpper]);
+    const row = result.rows[0];
+    ctx.body = {
+      id: row.id,
+      answer: row.answer,
+      question: row.question,
+      value: row.value,
+      categoryId: row.category_id,
+      gameId: row.game_id,
+      invalidCount: row.invalid_count,
+      category: {
+        id: row.category_id,
+        title: row.title,
+        canon: row.canonical_category
+      },
+      game: {
+        aired: row.aired,
+        canon: row.canonical_game
+      },
+      canon: row.canon
+    };
+  },
   async getOne(ctx, id, pool) {
     const result = await pool.query(`
       SELECT clues.id, clues.answer, clues.question, clues.value, clues.category_id, clues.invalid_count, clues.game_id, clues.canon

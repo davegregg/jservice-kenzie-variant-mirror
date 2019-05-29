@@ -233,6 +233,22 @@
   "invalid_count"?: number
 }
     </pre>
+    <h3>GET /api/random-clue(?valid=[true|false])</h3>
+    <p>Returns a random clue. By default, it will only return valid clues.</p>
+    <pre>
+{
+  "id": number,
+  "answer": string,
+  "question": string,
+  "value": number,
+  "categoryId": number,
+  "category": {
+    "id": number,
+    "title": string
+  },
+  "invalid_count"?: number
+}
+    </pre>
   </main>
   <footer>
     <p>
