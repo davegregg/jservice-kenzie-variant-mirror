@@ -47,6 +47,7 @@ export const games = {
     }
   },
   async getRandomGame(ctx, id, pool) {
+    id = Number.parseInt(id, 10);
     const result = await pool.query(`
       SELECT clues.id, clues.answer, clues.question, clues.value, clues.category_id, clues.invalid_count, clues.game_id, clues.canon
         , categories.title, categories.canon AS canonical_category
