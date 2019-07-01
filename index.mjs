@@ -6,9 +6,9 @@ import route from 'koa-route';
 import path from 'path';
 import pg from 'pg';
 
-import { categories } from './categories';
-import { clues } from './clues';
-import { games } from './games';
+import { categories } from './categories.mjs';
+import { clues } from './clues.mjs';
+import { games } from './games.mjs';
 
 const app = new Koa();
 const pool = new pg.Pool({
