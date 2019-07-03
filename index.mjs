@@ -15,6 +15,8 @@ const pool = new pg.Pool({
   connectionString: 'postgresql://jservice:jservice@localhost:5432/jservice',
 });
 
+const port = process.env.PORT || 8182
+
 app.use(cors());
 app.use(parser());
 
@@ -44,4 +46,4 @@ app.use(route.post('/api/clues', async ctx => clues.post(ctx, pool)));
 app.use(route.delete('/api/clues/:id', async (ctx, id) => clues.destroy(ctx, id, pool)));
 app.use(route.get('/api/random-clue', async ctx => clues.getRandom(ctx, pool)));
 
-app.listen(8182);
+app.listen(port);
