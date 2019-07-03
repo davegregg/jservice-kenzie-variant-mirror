@@ -10,8 +10,8 @@
     "dev": "nodemon -x \"node --experimental-modules index.mjs\" --watch '*.mjs'"
   },
   "engines":{
-      "node": "6.9.0",
-      "npm": "v12.1.0"
+      "npm": "6.9.0",
+      "node": "12.1.0"
   },
   "repository": {
     "type": "git",
