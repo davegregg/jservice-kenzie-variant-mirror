@@ -127,12 +127,13 @@ export const clues = {
     const { answer, question, value, categoryId } = ctx.request.body;
     if (answer && question && value && categoryId) {
       try {
+          // row_index, board_index, column_index appear to not be used.  In order to make this function without changing the database, I have to insert junk data.
         const insertResult = await pool.query(`
-          INSERT INTO clues(id, answer, question, value, category_id, invalid_count)
-          VALUES ((SELECT MAX(id) + 1 FROM clues), $1, $2, $3, $4, null)
+          INSERT INTO clues(row_index, board_index, column_index, answer, question, value, category_id, invalid_count)
+          VALUES (1, 1, 1, $1, $2, $3, $4, null)
           RETURNING id
         `, [answer, question, value, categoryId]);
-        const categoryResult = await pool.query('SELECT title FROM categories WHERE id = $1', [category_id]);
+        const categoryResult = await pool.query('SELECT title FROM categories WHERE id = $1', [categoryId]);
         ctx.body = {
           id: insertResult.rows[0].id,
           answer,
@@ -140,7 +141,7 @@ export const clues = {
           value,
           categoryId,
           category: {
-            id: category_id,
+            id: categoryId,
             title: categoryResult.rows[0].title
           },
           canon: false
@@ -148,7 +149,7 @@ export const clues = {
       } catch (e) {
         ctx.status = 400;
         ctx.body = {
-          message: 'You provided an invalid category_id value.'
+          message: 'You provided an invalid categoryId value.'
         };
       }
     } else {

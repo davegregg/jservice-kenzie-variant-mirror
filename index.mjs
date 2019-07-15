@@ -12,7 +12,7 @@ import { games } from './games.mjs';
 
 const app = new Koa();
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://jservice:jservice@localhost:5432/jservice',
+  connectionString: 'postgresql://jservice:jservice@localhost:5432/jservice',
 });
 
 const port = process.env.PORT || 8182
