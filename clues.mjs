@@ -155,7 +155,7 @@ export const clues = {
     } else {
       ctx.status = 400;
       ctx.body = {
-        message: 'You must supply an answer, question, value, and category_id'
+        message: 'You must supply an answer, question, value, and categoryId'
       };
     }
   },
